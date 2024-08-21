@@ -2,3 +2,4 @@ streamlit
 opencv-python-headless
 tensorflow
 matplotlib
+Pillow==7.0.0
