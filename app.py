@@ -76,18 +76,22 @@ im_width = 256
 file = st.file_uploader("Upload file", type=["csv", "png", "jpg"], accept_multiple_files=True)
 if file:
     for i in file:
-        st.header("Original Image:")
-        st.image(i)
-        content = i.getvalue()
-        image = np.asarray(bytearray(content), dtype="uint8")
-        image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-        img2 = cv2.resize(image, (im_height, im_width))
-        img3 = img2/255
-        img4 = img3[np.newaxis, :, :, :]
-        if st.button("Predict Output:"):
-            pred_img = model.predict(img4)
-            st.header("Predicted Image:")
-            st.image(pred_img)
-        else:
-            continue
+        st.header(f"Original Image: {i.name}")
+        try:
+            st.image(i)
+            content = i.getvalue()
+            image = np.asarray(bytearray(content), dtype="uint8")
+            st.write(f"Image array shape: {image.shape}")
+            
+            image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+            img2 = cv2.resize(image, (im_height, im_width))
+            img3 = img2 / 255.0
+            img4 = img3[np.newaxis, :, :, :]
+            st.write(f"Prepared image shape: {img4.shape}")
 
+            if st.button(f"Predict Output for {i.name}:"):
+                pred_img = model.predict(img4)
+                st.header("Predicted Image:")
+                st.image(pred_img)
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
